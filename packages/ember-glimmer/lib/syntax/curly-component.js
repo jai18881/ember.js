@@ -1,3 +1,4 @@
+import { BOUNDS } from 'ember-views/system/utils';
 import { StatementSyntax, ValueReference, EvaluatedArgs, EvaluatedNamedArgs, EvaluatedPositionalArgs } from 'glimmer-runtime';
 import { AttributeBinding, ClassNameBinding, IsVisibleBinding } from '../utils/bindings';
 import { ROOT_REF, DIRTY_TAG, IS_DISPATCHING_ATTRS, HAS_BLOCK } from '../component';
@@ -254,6 +255,10 @@ class CurlyComponentManager {
     }
 
     component._transitionTo('hasElement');
+  }
+
+  didRenderLayout({ component }, bounds) {
+    component[BOUNDS] = bounds;
   }
 
   getTag({ component }) {

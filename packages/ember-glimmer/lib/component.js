@@ -6,6 +6,7 @@ import InstrumentationSupport from 'ember-views/mixins/instrumentation_support';
 import AriaRoleSupport from 'ember-views/mixins/aria_role_support';
 import ViewMixin from 'ember-views/mixins/view_support';
 import ActionSupport from 'ember-views/mixins/action_support';
+import { BOUNDS } from 'ember-views/system/utils';
 import TargetActionSupport from 'ember-runtime/mixins/target_action_support';
 import symbol from 'ember-metal/symbol';
 import { get } from 'ember-metal/property_get';
@@ -42,6 +43,7 @@ const Component = CoreView.extend(
       this[IS_DISPATCHING_ATTRS] = false;
       this[DIRTY_TAG] = new DirtyableTag();
       this[ROOT_REF] = new RootReference(this);
+      this[BOUNDS] = null;
 
       // If a `defaultLayout` was specified move it to the `layout` prop.
       // `layout` is no longer a CP, so this just ensures that the `defaultLayout`

@@ -5,6 +5,10 @@
 @submodule ember-views
 */
 
+import symbol from 'ember-metal/symbol';
+
+export const BOUNDS = symbol('BOUNDS');
+
 export function isSimpleClick(event) {
   let modifier = event.shiftKey || event.metaKey || event.altKey || event.ctrlKey;
   let secondaryClick = event.which > 1; // IE9 may return undefined
@@ -18,15 +22,53 @@ export const STYLE_WARNING = '' +
   'including how to disable this warning, see ' +
   'http://emberjs.com/deprecations/v1.x/#toc_binding-style-attributes.';
 
+class ConcreteBounds {
+  constructor(parent, first, last) {
+    this.parent = parent;
+    this.first  = first;
+    this.last   = last;
+  }
+
+  parentElement() {
+    return this.parent;
+  }
+
+  firstNode() {
+    return this.first;
+  }
+
+  lastNode() {
+    return this.last;
+  }
+}
+
 /**
   @private
   @method getViewRange
   @param {Ember.View} view
 */
-function getViewRange(view) {
+export function getViewBounds(view) {
+  if (view[BOUNDS]) {
+    return view[BOUNDS];
+  } else if (view._renderNode) {
+    return new ConcreteBounds(view._renderNode.firstNode.parentNode, view._renderNode.firstNode, view._renderNode.lastNode);
+  } else {
+    throw new Error(`Cannot get bounds for ${view}`);
+  }
+}
+
+/**
+  @private
+  @method getViewRange
+  @param {Ember.View} view
+*/
+export function getViewRange(view) {
+  let bounds = getViewBounds(view);
+
   let range = document.createRange();
-  range.setStartBefore(view._renderNode.firstNode);
-  range.setEndAfter(view._renderNode.lastNode);
+  range.setStartBefore(bounds.firstNode());
+  range.setEndAfter(bounds.lastNode());
+
   return range;
 }
 
